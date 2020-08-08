@@ -51,21 +51,41 @@ public class MCDecompiler {
     public MCDecompiler(){
         work_dir=Paths.get( System.getProperty("user.dir"));
     }
-    private void download_file(URL urlkun,Path file_path){
+    public void get_global_manifest(){
+
+    }
+
+    /**
+     * file Downloader
+     * @param urlkun url
+     * @param file_path file path
+     * @throws IOException io error
+     */
+    private void download_file(URL urlkun,Path file_path) throws IOException {
         int size=0;
-        try(DataInputStream in=new DataInputStream(urlkun.openStream());
-            DataOutputStream out=new DataOutputStream(new FileOutputStream(file_path.toFile()))){
-            byte[] buf=new byte[8192];
-            int len=0;
-            while((len = in.read(buf)) != -1){
-                out.write(buf,0,len);
-                size += len;
-            }
-            out.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        DataInputStream in=new DataInputStream(urlkun.openStream());
+        DataOutputStream out=new DataOutputStream(new FileOutputStream(file_path.toFile()));
+        byte[] buf=new byte[8192];
+        int len=0;
+        while((len = in.read(buf)) != -1){
+            out.write(buf,0,len);
+            size += len;
         }
+        out.flush();
+    }
+    public static String URL_to_str_download(URL urlkun) throws IOException {
+        InputStream istream=urlkun.openStream();
+        InputStreamReader istreamreader=new InputStreamReader(istream);
+        BufferedReader br=new BufferedReader(istreamreader);
+        String line;
+        String output_str = "";
+        while((line = br.readLine()) != null){
+            output_str += line ;
+            output_str += "\n";
+        }
+        br.close();
+        istreamreader.close();
+        istream.close();
+        return output_str;
     }
 }
