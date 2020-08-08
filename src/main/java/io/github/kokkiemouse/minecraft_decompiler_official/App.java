@@ -4,6 +4,7 @@
 package io.github.kokkiemouse.minecraft_decompiler_official;
 
 import io.github.kokkiemouse.minecraft_decompiler_official.lib.Get_OS;
+import io.github.kokkiemouse.minecraft_decompiler_official.lib.MCDecompiler;
 
 public class App {
     public String getGreeting() {
@@ -12,6 +13,6 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
-        System.out.println(Get_OS.get_OS());
+        System.out.println(MCDecompiler.get_minecraft_path());
     }
 }
