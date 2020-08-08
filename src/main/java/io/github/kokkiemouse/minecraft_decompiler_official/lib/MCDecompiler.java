@@ -1,9 +1,19 @@
 package io.github.kokkiemouse.minecraft_decompiler_official.lib;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class MCDecompiler {
+    private Path work_dir;
+    public void set_work_dir(Path workd){
+        work_dir=workd;
+    }
+    public Path get_work_dir(){
+        return work_dir;
+    }
     public static Path get_minecraft_path(){
         Get_OS.OS_ENUM Now_OS=Get_OS.get_OS();
         switch (Now_OS){
@@ -36,6 +46,26 @@ public class MCDecompiler {
             }
 
 
+        }
+    }
+    public MCDecompiler(){
+        work_dir=Paths.get( System.getProperty("user.dir"));
+    }
+    private void download_file(URL urlkun,Path file_path){
+        int size=0;
+        try(DataInputStream in=new DataInputStream(urlkun.openStream());
+            DataOutputStream out=new DataOutputStream(new FileOutputStream(file_path.toFile()))){
+            byte[] buf=new byte[8192];
+            int len=0;
+            while((len = in.read(buf)) != -1){
+                out.write(buf,0,len);
+                size += len;
+            }
+            out.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
