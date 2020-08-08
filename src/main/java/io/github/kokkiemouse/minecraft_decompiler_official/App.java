@@ -6,6 +6,9 @@ package io.github.kokkiemouse.minecraft_decompiler_official;
 import io.github.kokkiemouse.minecraft_decompiler_official.lib.Get_OS;
 import io.github.kokkiemouse.minecraft_decompiler_official.lib.MCDecompiler;
 
+import java.io.IOException;
+import java.net.URL;
+
 public class App {
     public String getGreeting() {
         return "Hello world.";
@@ -13,6 +16,9 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
-        System.out.println(MCDecompiler.get_minecraft_path());
+        MCDecompiler mcd=new MCDecompiler();
+        mcd.set_CLIENT_OR_SERVER(MCDecompiler.MCJAR_TYPE.CLIENT);
+        mcd.set_decompile_version("1.16.1");
+        mcd.get_version_manifest();
     }
 }

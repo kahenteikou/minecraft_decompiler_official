@@ -18,3 +18,8 @@ build
 
 # Intellij idea
 .idea/
+
+#This app
+versions/
+mappings/
+
