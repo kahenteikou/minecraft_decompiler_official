@@ -19,6 +19,9 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
+    maven {
+        url "https://kokkiemouse.github.io/maven/maven/"
+    }
 }
 
 dependencies {
@@ -27,7 +30,7 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
     // https://mvnrepository.com/artifact/org.json/json
     compile group: 'org.json', name: 'json', version: '20200518'
-
+    implementation 'us.tedstar:Mojang2Tsrg:1.0.1'
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
 }

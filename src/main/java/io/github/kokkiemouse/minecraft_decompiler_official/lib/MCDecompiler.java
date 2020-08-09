@@ -2,6 +2,7 @@ package io.github.kokkiemouse.minecraft_decompiler_official.lib;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import us.tedstar.mojang2tsrg.Mojang2Tsrg;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -18,9 +19,19 @@ public class MCDecompiler {
         SERVER
     }
     private Path work_dir;
+
+    /**
+     * set work directory
+     * @param workd work directory
+     */
     public void set_work_dir(Path workd){
         work_dir=workd;
     }
+
+    /**
+     * get work directory
+     * @return work directory
+     */
     public Path get_work_dir(){
         return work_dir;
     }
@@ -78,7 +89,35 @@ public class MCDecompiler {
         return "error";
 
     }
+    public void convert_mappings(){
+        String side_name;
+        switch(CLIENT_OR_SERVER){
+            case CLIENT:{
+                side_name="client";
+                break;
+            }
+            case SERVER:{
+                side_name="server";
+                break;
 
+            }
+            default:{
+                side_name="server";
+                break;
+            }
+        }
+        File map_file=work_dir.resolve("mappings").resolve(decompile_version).resolve(side_name + ".txt").toFile();
+        File out_file=work_dir.resolve("mappings").resolve(decompile_version).resolve(side_name + ".tsrg").toFile();
+        Mojang2Tsrg m2t=new Mojang2Tsrg();
+        try {
+            m2t.loadClasses(map_file);
+            m2t.writeTsrg(map_file,out_file);
+        }catch (IOException e){
+
+        }
+
+
+    }
     public static Path get_minecraft_path(){
         Get_OS.OS_ENUM Now_OS=Get_OS.get_OS();
         switch (Now_OS){
@@ -113,6 +152,50 @@ public class MCDecompiler {
 
         }
     }
+
+    /**
+     * download minecraft jar
+     */
+    public void get_minecraft_jar(){
+
+        Path JSONFile_path=work_dir.resolve("versions").resolve(decompile_version).resolve("version.json");
+        try {
+            String json_content = Files.readString(JSONFile_path);
+            JSONObject jo22=new JSONObject(json_content);
+            String jar_url;
+            switch (CLIENT_OR_SERVER){
+                case CLIENT:{
+                    jar_url=jo22.getJSONObject("downloads").getJSONObject("client").getString("url");
+                    break;
+                }
+                case SERVER:{
+                    jar_url=jo22.getJSONObject("downloads").getJSONObject("server").getString("url");
+                    break;
+                }
+                default:{
+                    return;
+                }
+            }
+            Path download_path;
+            switch (CLIENT_OR_SERVER){
+                case CLIENT:{
+                    download_path=work_dir.resolve("versions").resolve(decompile_version).resolve("client.jar");
+                    break;
+                }
+                case SERVER:{
+                    download_path=work_dir.resolve("versions").resolve(decompile_version).resolve("server.jar");
+
+                    break;
+                }
+                default:{
+                    return;
+                }
+            }
+            download_file(new URL(jar_url),download_path);
+        }catch (IOException e){
+
+        }
+    }
     public MCDecompiler(){
         work_dir=Paths.get( System.getProperty("user.dir"));
     }
@@ -121,9 +204,15 @@ public class MCDecompiler {
      * @param urlkun url
      * @param file_path file path
      * @throws IOException io error
+     * @param overwrite overwrite
      */
-    private void download_file(URL urlkun,Path file_path) throws IOException {
+    private void download_file(URL urlkun,Path file_path,boolean overwrite) throws IOException {
         int size=0;
+        if(!overwrite){
+            if(file_path.toFile().exists()){
+                return;
+            }
+        }
         DataInputStream in=new DataInputStream(urlkun.openStream());
         if(!file_path.toFile().getParentFile().exists()){
             Files.createDirectories(file_path.getParent());
@@ -136,6 +225,15 @@ public class MCDecompiler {
             size += len;
         }
         out.flush();
+    }
+    /**
+     * file Downloader
+     * @param urlkun url
+     * @param file_path file path
+     * @throws IOException io error
+     */
+    private void download_file(URL urlkun,Path file_path) throws IOException {
+        download_file(urlkun,file_path,true);
     }
     public static String URL_to_str_download(URL urlkun) throws IOException {
         InputStream istream=urlkun.openStream();
@@ -151,5 +249,44 @@ public class MCDecompiler {
         istreamreader.close();
         istream.close();
         return output_str;
+    }
+    public void get_mappings(){
+        Path JSONFile_path=work_dir.resolve("versions").resolve(decompile_version).resolve("version.json");
+        try {
+            String json_content = Files.readString(JSONFile_path);
+            JSONObject jo22=new JSONObject(json_content);
+            String mapping_url;
+            switch (CLIENT_OR_SERVER){
+                case CLIENT:{
+                    mapping_url=jo22.getJSONObject("downloads").getJSONObject("client_mappings").getString("url");
+                    break;
+                }
+                case SERVER:{
+                    mapping_url=jo22.getJSONObject("downloads").getJSONObject("server_mappings").getString("url");
+                    break;
+                }
+                default:{
+                    return;
+                }
+            }
+            Path download_path;
+            switch (CLIENT_OR_SERVER){
+                case CLIENT:{
+                    download_path=work_dir.resolve("mappings").resolve(decompile_version).resolve("client.txt");
+                    break;
+                }
+                case SERVER:{
+                    download_path=work_dir.resolve("mappings").resolve(decompile_version).resolve("server.txt");
+
+                    break;
+                }
+                default:{
+                    return;
+                }
+            }
+            download_file(new URL(mapping_url),download_path);
+        }catch (IOException e){
+
+        }
     }
 }

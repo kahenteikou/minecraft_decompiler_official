@@ -20,5 +20,8 @@ public class App {
         mcd.set_CLIENT_OR_SERVER(MCDecompiler.MCJAR_TYPE.CLIENT);
         mcd.set_decompile_version("1.16.1");
         mcd.get_version_manifest();
+        mcd.get_mappings();
+        mcd.convert_mappings();
+        mcd.get_minecraft_jar();
     }
 }
