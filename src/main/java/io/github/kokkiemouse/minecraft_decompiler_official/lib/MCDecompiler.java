@@ -191,7 +191,7 @@ public class MCDecompiler {
                     return;
                 }
             }
-            download_file(new URL(jar_url),download_path);
+            download_file(new URL(jar_url),download_path,false);
         }catch (IOException e){
 
         }
@@ -284,7 +284,7 @@ public class MCDecompiler {
                     return;
                 }
             }
-            download_file(new URL(mapping_url),download_path);
+            download_file(new URL(mapping_url),download_path,false);
         }catch (IOException e){
 
         }
